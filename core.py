@@ -1,63 +1,77 @@
 import os
 
-# 1. طباعة مجلد العمل الحالي لمعرفة أين يبحث بايثون
-print(f"بايثون يبحث حالياً داخل هذا المجلد العام:")
-print(f"📂 {os.getcwd()}\n")
 
-# 2. اكتب هنا المسار الكامل (الكامل) للملف على جهازك إذا لم يعمل المسار التلقائي
-# مثال لو ويندوز: "C:/Users/YourName/Desktop/pkoi/config.lua"
-# مثال لو موبايل/أندرويد: "/storage/emulated/0/pkoi/config.lua"
-MANUAL_PATH = ""
+def run_pipeline():
+    # 1. تحديد مسار ملف config.lua
+    # تم تعديل المسار ليتناسب مع مجلد الصور الظاهر في جهازك
+    lua_path = "/storage/emulated/0/Pictures/pkoi/config.lua"
 
-# تحديد المسار التلقائي
-folder_name = "name folder"
-file_name = "name The file that will be read in Lua language "
-default_path = os.path.join(folder_name, file_name)
+    # إذا لم يجد المجلد هناك، سيبحث في المجلد الحالي
+    if not os.path.exists(lua_path):
+        lua_path = os.path.join("pkoi", "config.lua")
 
-# اختيار المسار الفعلي المتوفر
-file_path = MANUAL_PATH if MANUAL_PATH else default_path
+    if not os.path.exists(lua_path):
+        print(
+            f"❌ خطأ: لم يتم العثور على ملف config.lua. تأكد من وجود مجلد pkoi وبداخله الملف."
+        )
+        return
 
-if not os.path.exists(file_path):
-    print(f"❌ خطأ: لم يتم العثور على الملف في المسار: {os.path.abspath(file_path)}")
-    print("💡 الحل: انسخ المسار الحقيقي للملف من جهازك وضعه في متغير MANUAL_PATH في السطر رقم 9.")
-else:
-    print(f"✅ تم العثور على الملف بنجاح في: {file_path}")
-    
-    # قراءة وتنظيف النص واستخراج المصفوفات مباشرة
-    with open(file_path, "r", encoding="utf-8") as file:
-        lines = file.readlines()
-    
-    data_dict = {}
-    current_var = None
-    
-    for line in lines:
-        line = line.strip()
-        if not line or line.startswith("--"):
+    # 2. قراءة واستخراج المهام من ملف الـ Lua
+    tasks = {}
+    with open(lua_path, "r", encoding="utf-8") as file:
+        current_var = None
+        for line in file:
+            line = line.strip()
+            if not line or line.startswith("--"):
+                continue
+
+            if "=" in line and "{" in line:
+                current_var = line.split("=")[0].replace("local", "").strip()
+                tasks[current_var] = []
+            elif current_var and "{" in line and "}" in line:
+                clean_line = (
+                    line.replace("{", "").replace("}", "").replace(",", "")
+                )
+                nums = [int(x) for x in clean_line.split() if x.isdigit()]
+                if nums:
+                    tasks[current_var].append(nums)
+            elif line in ["}", "};"]:
+                current_var = None
+
+    # 3. محاكاة خوارزمية C++ (ترتيب الأرقام داخلياً وترتيب الصفوف حسب الأهمية/الوقت)
+    sorted_tasks = {}
+    for task_name, matrix in tasks.items():
+        if not matrix:
             continue
-        
-        # التقاط اسم المصفوفة
-        if "=" in line and "{" in line:
-            var_name = line.split("=")[0].replace("local", "").strip()
-            current_var = var_name
-            data_dict[current_var] = []
-        
-        # التقاط الأرقام داخل الصفوف
-        elif current_var and "{" in line and "}" in line:
-            clean_num = line.replace("{", "").replace("}", "").replace(",", "")
-            nums = [int(x) for x in clean_num.split() if x.isdigit()]
-            if nums:
-                data_dict[current_var].append(nums)
-                
-        if line == "}" or line == "};":
-            current_var = None
 
-    # ترتيب المتغيرات والمصفوفات داخلياً
-    sorted_result = {}
-    for k, v in sorted(data_dict.items()):
-        if v:
-            v.sort() # ترتيب الصفوف الداخلية
-            sorted_result[k] = v
+        processed_matrix = []
+        for row in matrix:
+            # ترتيب الأرقام داخل الصف نفسه تصاعدياً (مثل كود C++)
+            sorted_row = sorted(row)
+            processed_matrix.append(sorted_row)
 
-    print("\n📊 النتيجة بعد الترتيب التلقائي:")
-    for var, matrix in sorted_result.items():
-        print(f"{var} = {matrix}")
+        # ترتيب الصفوف بالكامل بناءً على أول عنصر (مثل كود C++)
+        processed_matrix.sort()
+        sorted_tasks[task_name] = processed_matrix
+
+    # 4. ترتيب المتغيرات الخارجية أبجدياً
+    final_output = dict(sorted(sorted_tasks.items()))
+
+    # 5. طباعة النتيجة النهائية المنسقة في الـ Console بشكل احترافي
+    print("\n" + "=" * 45)
+    print("📋  قائمة المهام والواجبات المرتبة تلقائياً  📋")
+    print("=" * 45)
+
+    for name, matrix in final_output.items():
+        print(f"\n🔹 المهمة: {name.upper()}")
+        print("-" * 30)
+        for row in matrix:
+            formatted_row = " | ".join(map(str, row))
+            print(f"  [ {formatted_row} ]")
+        print("-" * 30)
+
+    print("\n" + "=" * 45)
+
+
+if __name__ == "__main__":
+    run_pipeline()
