@@ -7,4 +7,4 @@ An advanced task management console application that demonstrates hybrid interop
 ## Licensing & Purchase
 This project is available for custom deployment and commercial use.
 - **Official Verified Price:** $30 USD
-- **Contact to Buy:** [اكتب هنا إيميلك أو حساب تليجرام بتاعك]
+- **Contact to Buy:** [my number 01095354455]
