@@ -1,2 +1,10 @@
-# bokni-Python-reader-lua
-To purchase the complete script or have it customized to suit your project for $30, contact me. Egyptian code for modification and phone number 01095354455 
+# Smart Task Manager (Hybrid System)
+
+An advanced task management console application that demonstrates hybrid interoperability by combining:
+- **Lua Engine:** Advanced nested tables structures.
+- **Python Dynamic Parser:** String manipulation and automatic sorting.
+
+## Licensing & Purchase
+This project is available for custom deployment and commercial use.
+- **Official Verified Price:** $30 USD
+- **Contact to Buy:** [اكتب هنا إيميلك أو حساب تليجرام بتاعك]
